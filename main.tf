@@ -12,8 +12,8 @@ module "label" {
 locals {
   enabled      = var.enabled == "true" ? true : false
   require_mfa  = var.require_mfa == "true" ? true : false
-  role_arns    = ["${values(var.role_arns)}"]
-  role_aliases = ["${keys(var.role_arns)}"]
+  role_arns    = values(var.role_arns)
+  role_aliases = keys(var.role_arns)
 }
 
 resource "null_resource" "role" {
@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "with_mfa" {
       "sts:AssumeRole",
     ]
 
-    resources = ["${local.role_arns}"]
+    resources = local.role_arns
 
     condition {
       test     = "Bool"
@@ -79,7 +79,7 @@ data "aws_iam_policy_document" "without_mfa" {
       "sts:AssumeRole",
     ]
 
-    resources = ["${local.role_arns}"]
+    resources = local.role_arns
 
     effect = "Allow"
   }
